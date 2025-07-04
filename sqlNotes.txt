@@ -1,0 +1,191 @@
+Here's a **clean, pointwise note** based on your SQL commands on the `products` table, along with **important keywords** and **concepts** that are often asked or useful in practice.
+
+---
+
+## 🗂️ **SQL Notes for `products` Table**
+
+---
+
+### 🔹 **INSERTING DATA**
+
+```sql
+INSERT INTO products (name, price, inventory) VALUES ('tortilla', 500, 700);
+```
+
+* Adds a new row into the table.
+* **Keyword**: `INSERT INTO`, `VALUES`
+
+```sql
+INSERT INTO products (name, price, inventory, is_Sale) 
+VALUES ('notebook', 10, 50, true), ('pen', 5, 1000, true);
+```
+
+* Insert multiple rows in one query.
+* **Best Practice**: Use bulk inserts to reduce queries.
+
+---
+
+### 🔹 **RETRIEVING DATA**
+
+```sql
+SELECT * FROM products WHERE id = 5;
+```
+
+* Selects all columns for the row with id = 5.
+* **Keyword**: `SELECT`, `WHERE`
+
+```sql
+SELECT * FROM products WHERE id % 2 = 0;
+```
+
+* Select even `id`s (modulo operation).
+* `%` is **modulus** operator.
+
+```sql
+SELECT * FROM products WHERE id IN (0, 2, 3);
+```
+
+* Matches any id listed inside `IN`.
+* **Keyword**: `IN`, good for filtering multiple values.
+
+```sql
+SELECT * FROM products WHERE name LIKE 'TV%';
+```
+
+* Selects rows where name **starts with** "TV".
+* **Keyword**: `LIKE`, `%` is wildcard (any characters).
+
+```sql
+SELECT * FROM products WHERE name LIKE '%et';
+```
+
+* Name ends with "et".
+
+```sql
+SELECT * FROM products WHERE name LIKE '%et%';
+```
+
+* Name contains "et" **anywhere**.
+
+```sql
+SELECT * FROM products WHERE name NOT LIKE 'TV%';
+```
+
+* Name does **not** start with "TV".
+* **Keyword**: `NOT LIKE`
+
+---
+
+### 🔹 **ORDERING RESULTS**
+
+```sql
+SELECT * FROM products ORDER BY id DESC;
+```
+
+* Sorts by `id` in **descending** order (latest last).
+
+```sql
+SELECT * FROM products ORDER BY inventory;
+```
+
+* Ascending order by inventory.
+
+```sql
+SELECT * FROM products ORDER BY price, id;
+```
+
+* First by price, then by id **(tie breaker)**.
+
+```sql
+SELECT * FROM products ORDER BY created_at DESC;
+```
+
+* Most recently created entries first.
+* Works if you have a `created_at` column (e.g., `TIMESTAMP`).
+
+```sql
+SELECT * FROM products ORDER BY price LIMIT 10;
+```
+
+* Top 10 products sorted by price.
+* **Keyword**: `LIMIT` controls number of results.
+
+---
+
+### 🔹 **FILTERING WITH CONDITIONS**
+
+```sql
+SELECT * FROM products WHERE price > 200 ORDER BY price, id;
+```
+
+* Filters rows with price > 200, and sorts.
+
+```sql
+SELECT * FROM products WHERE price > 300 LIMIT 10;
+```
+
+* First 10 rows where price is above 300.
+
+---
+
+### 🔹 **DELETING DATA**
+
+```sql
+DELETE FROM products WHERE id = 9;
+```
+
+* Removes the row with `id = 9`.
+* ⚠️ **Dangerous** – always use `WHERE` with `DELETE`.
+
+---
+
+### 🔹 **UPDATING DATA**
+
+```sql
+UPDATE products SET price = 9000 WHERE id = 5;
+```
+
+* Updates price for row with `id = 5`.
+* **Keyword**: `UPDATE`, `SET`
+
+---
+
+## 🧠 Extra Must-Know SQL Keywords & Concepts
+
+| Keyword                   | Meaning / Usage                                 |
+| ------------------------- | ----------------------------------------------- |
+| `DISTINCT`                | Removes duplicate rows.                         |
+| `AS`                      | Rename column/table temporarily (alias).        |
+| `BETWEEN`                 | Range filter: `WHERE price BETWEEN 100 AND 500` |
+| `IS NULL` / `IS NOT NULL` | Check for missing values.                       |
+| `COUNT(*)`                | Count total rows.                               |
+| `GROUP BY`                | Aggregate rows based on one or more columns.    |
+| `HAVING`                  | Like `WHERE` but used **after `GROUP BY`**.     |
+| `JOIN`                    | Combine rows from multiple tables.              |
+| `NOW()`                   | Current timestamp.                              |
+| `EXISTS`                  | Check if subquery returns any result.           |
+| `OFFSET`                  | Skip rows for pagination.                       |
+| `DEFAULT`                 | Set default values for columns.                 |
+| `CHECK`                   | Constraint to validate column values.           |
+
+---
+
+## 🧪 Bonus Practice Queries
+
+```sql
+-- Get count of products that are on sale
+SELECT COUNT(*) FROM products WHERE is_Sale = true;
+
+-- Get products with price between 200 and 500
+SELECT * FROM products WHERE price BETWEEN 200 AND 500;
+
+-- Rename column in output
+SELECT name AS product_name FROM products;
+
+-- Check for missing values
+SELECT * FROM products WHERE is_Sale IS NULL;
+```
+
+---
+
+Let me know if you'd like to turn this into a PDF or get flashcards for revision!

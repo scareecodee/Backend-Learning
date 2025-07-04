@@ -176,16 +176,16 @@ def send_otp(request: EmailRequest):
     # ✅ Email details
     sender_email = "godofgenjutsu890@gmail.com"
     app_password = "zxhf dhds yvgm vnou"
-    subject = "Your Verification OTP - Zebyte App"
-    body = f'''Thank you for using Zebyte!
+    subject = "Your Verification OTP - Project One App"
+    body = f'''Thank you for using Project One'!
 To complete your verification, please use the one-time password (OTP) below:
 OTP:{otp}
 If you did not request this code, you can safely ignore this email.
 
-Thank you for choosing Zebyte!
+Thank you for choosing Project One'!
 
 Best regards,
-The Zebyte Team'''
+Project One'''
 
     msg = MIMEText(body)
     msg["Subject"] = subject
