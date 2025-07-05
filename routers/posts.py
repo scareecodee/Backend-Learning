@@ -5,7 +5,7 @@ from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 import os
 import time
-from . import model ,schemas
+from app import model ,schemas
 from sqlalchemy.orm import session 
 from app.database import engine, get_db
 
@@ -13,31 +13,10 @@ from app.database import engine, get_db
 model.Base.metadata.create_all(bind=engine)
 
 
-router=APIRouter()
+router=APIRouter(
+    prefix="/post"
+)
 
-
-while True:
-    try:
-        conn = psycopg2.connect(
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
-        cursor_factory=RealDictCursor)
-        print("Connection to DataBase was succesful")
-        break
-        
-    except Exception as error:
-        print("Connection to DataBase failed")
-        print(f"error is {error}")
-        time.sleep(5)
-
-
-
-@router.get("/")
-def root():
-    return {"data":"Server is Running..."}
 
 # @app.get("/posts")
 # def getAllPosts():
@@ -50,7 +29,7 @@ def root():
 
 #  ----------------OR--------------------------
 
-@router.get('/posts',response_model=List[schemas.res])
+@router.get('',response_model=List[schemas.res])
 def test_post(db:session=Depends(get_db)):
     posts=db.query(model.Post).all()
     return posts
@@ -72,7 +51,7 @@ def test_post(db:session=Depends(get_db)):
 
 # -------------------OR----------------------------------
 
-@router.post('/post',response_model=schemas.res)
+@router.post('',response_model=schemas.res)
 def createPost(post:schemas.Post,db:session=Depends(get_db)):
     new_post=model.Post(**post.dict())
     db.add(new_post)
@@ -96,7 +75,7 @@ def createPost(post:schemas.Post,db:session=Depends(get_db)):
 
 # ------------------------OR----------------------
 
-@router.get("/post/{id}",response_model=schemas.res)
+@router.get("/{id}",response_model=schemas.res)
 def getPostById(id:int,db:session=Depends(get_db)):
     post=db.query(model.Post).filter(model.Post.id==id).first()
     if post:
@@ -121,7 +100,7 @@ def getPostById(id:int,db:session=Depends(get_db)):
 
 # -------------------OR--------------------------
 
-@router.delete("/post/{id}",response_model=schemas.res)
+@router.delete("/{id}",response_model=schemas.res)
 def deletePost(id:int,db:session=Depends(get_db)):
     deleted_post=db.query(model.Post).filter(model.Post.id==id).first()
     if deleted_post:
@@ -158,7 +137,7 @@ def deletePost(id:int,db:session=Depends(get_db)):
 
 
 
-@router.put("/post/{id}",response_model=schemas.res)
+@router.put("/{id}",response_model=schemas.res)
 def update_post(response: Response, id: int, post: schemas.Post, db:session = Depends(get_db)):
     post_query = db.query(model.Post).filter(model.Post.id == id)
 
