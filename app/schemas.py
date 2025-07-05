@@ -29,3 +29,8 @@ class createUserRes(BaseModel):
     email:EmailStr
     class Config:
         from_attributes = True
+    
+#login req
+class loginReqSchema(BaseModel):
+    password:str
+    email:EmailStr

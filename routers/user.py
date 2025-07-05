@@ -4,11 +4,14 @@ from sqlalchemy.orm import session
 from app.database import  get_db, engine
 from utils.hashing import hash_password
 
-router=APIRouter()
 model.Base.metadata.create_all(bind=engine)
+router=APIRouter(
+    prefix="/user",
+    tags=['user']
+)
 
-@router.post('/users',response_model=schemas.createUserRes,status_code=status.HTTP_201_CREATED)
-def createPost(user:schemas.createUserReq,db:session=Depends(get_db)):
+@router.post('',response_model=schemas.createUserRes,status_code=status.HTTP_201_CREATED)
+def createUser(user:schemas.createUserReq,db:session=Depends(get_db)):
     hashed_password=hash_password(user.password)
     user.password=hashed_password
     user=model.users(**user.dict())
@@ -19,7 +22,7 @@ def createPost(user:schemas.createUserReq,db:session=Depends(get_db)):
 
 
 
-@router.get("/user/{id}")
+@router.get("/{id}")
 def getUserById(id:str,db:session=Depends(get_db)):
     user=db.query(model.users).filter(model.users.id==id).first()
     if user:

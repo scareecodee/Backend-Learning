@@ -14,7 +14,8 @@ model.Base.metadata.create_all(bind=engine)
 
 
 router=APIRouter(
-    prefix="/post"
+    prefix="/post",
+    tags=['posts']
 )
 
 
