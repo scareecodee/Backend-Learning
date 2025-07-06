@@ -8,6 +8,7 @@ import time
 from app import model ,schemas
 from sqlalchemy.orm import session 
 from app.database import engine, get_db
+from utils.outh2 import getCurrentUser
 
 #"Look at all classes that inherit from Base (your SQLAlchemy models), and create the corresponding tables in the database — if they don’t already exist."
 model.Base.metadata.create_all(bind=engine)
@@ -53,7 +54,7 @@ def test_post(db:session=Depends(get_db)):
 # -------------------OR----------------------------------
 
 @router.post('',response_model=schemas.res)
-def createPost(post:schemas.Post,db:session=Depends(get_db)):
+def createPost(post:schemas.Post,db:session=Depends(get_db),getCurrentUser=Depends(getCurrentUser)):
     new_post=model.Post(**post.dict())
     db.add(new_post)
     db.commit()
