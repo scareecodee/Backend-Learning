@@ -1,5 +1,7 @@
 from fastapi import APIRouter,Depends,HTTPException,status
+from fastapi.security import OAuth2PasswordRequestForm
 from utils.hashing import hash_password,verify_password
+from utils.outh2 import jwtTokenGenerator
 from app.schemas import loginReqSchema
 from app import model 
 from app.database import engine,get_db
@@ -7,15 +9,18 @@ from app.database import engine,get_db
 model.Base.metadata.create_all(bind=engine)
 router=APIRouter()
 
-@router.get("/login")
-def login(credential:loginReqSchema,db=Depends(get_db)):
+# {"username":"heyy", "password":"12345}" ----> OAuth2PasswordRequestForm
+
+@router.post("/login")
+def login(credential:OAuth2PasswordRequestForm=Depends(),db=Depends(get_db)):
     user=db.query(model.users).filter(model.users.
-    email==credential.email).first()
+    email==credential.username).first()
     if user:
         pass_entered=credential.password
         hash_storedInDB=user.password
         if verify_password(pass_entered,hash_storedInDB):
-            return "login succesfull"
+            token=jwtTokenGenerator({"id":"12345"})
+            return {"access_token":token,"token_type":"bearer"}
         return "wrong credential"
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                         detail="No user found")
