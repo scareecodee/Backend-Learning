@@ -1,6 +1,7 @@
 from .database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Text, Float
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 class Post(Base):
     __tablename__="posts"
@@ -10,6 +11,8 @@ class Post(Base):
     content=Column(type_=String,nullable=False)
     published=Column(type_=Boolean,default=True)
     created_at = Column(type_=DateTime(timezone=True), server_default=func.now()) 
+    owner_id=Column(String,ForeignKey("users.id",ondelete="CASCADE"), nullable=False)
+    owner=relationship("Users")
 
 
 # default=True: Python sets the default before sending to the DB
@@ -17,7 +20,7 @@ class Post(Base):
 # server_default=func.now(): Database sets the default when inserting
 
 # for registration
-class users(Base):
+class Users(Base):
     __tablename__="users"
     id=Column(type_=String,primary_key=True,nullable=False)
     email=Column(type_=String,nullable=False,unique=True)

@@ -1,20 +1,11 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+
 #creating schema for creating post or retreving post
 class Post(BaseModel):
     title:str
     content:str
     published:bool
-
-#creating schema for response
-
-class res(BaseModel):
-    title:str
-    content:str
-    published:bool
-    class Config:
-        from_attributes = True
-
 
 #creating req schema for registration of user
 
@@ -29,6 +20,18 @@ class createUserRes(BaseModel):
     email:EmailStr
     class Config:
         from_attributes = True
+
+#creating schema for response
+class res(BaseModel):
+    title:str
+    content:str
+    published:bool
+    owner:createUserRes
+    class Config:
+        from_attributes = True
+
+
+
     
 #login req
 class loginReqSchema(BaseModel):
@@ -39,7 +42,8 @@ class loginReqSchema(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    class Config:
+        from_attributes = True
 
 class TokenData(BaseModel):  #data to be embeded in payload of jwt token
     id:Optional[str]= None
-    

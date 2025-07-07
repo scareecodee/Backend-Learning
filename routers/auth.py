@@ -2,9 +2,10 @@ from fastapi import APIRouter,Depends,HTTPException,status
 from fastapi.security import OAuth2PasswordRequestForm
 from utils.hashing import hash_password,verify_password
 from utils.outh2 import jwtTokenGenerator
-from app import model 
+from app import model , schemas
 from app.database import engine,get_db
 from jose import JWTError,jwt
+
 
 model.Base.metadata.create_all(bind=engine)
 
@@ -17,7 +18,7 @@ router=APIRouter()
 
 # {"username":"heyy", "password":"12345}" ----> OAuth2PasswordRequestForm
 
-@router.post("/login")
+@router.post("/login",response_model=schemas.Token)
 def login(credential:OAuth2PasswordRequestForm=Depends(),db=Depends(get_db)):
     user=db.query(model.users).filter(model.users.
     email==credential.username).first()

@@ -1,8 +1,8 @@
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
+from app import model
 from fastapi import Depends,HTTPException,status
 from fastapi.security import OAuth2PasswordBearer
-from app import model 
 from app.database import get_db
 from app.schemas import TokenData
 
@@ -22,7 +22,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 def jwtTokenGenerator(data:dict):
     to_encode=data.copy()
     expire=datetime.utcnow()+timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp":int(expire.timestamp())})
+    to_encode.update({"exp":expire})
     jwtToken=jwt.encode(to_encode,SECRET_KEY,ALGORITHM)
     return jwtToken
 
@@ -34,14 +34,19 @@ def verifyJwtToken(token:str=Depends(oauth2_scheme)):
     headers={"WWW-Authenticate": "Bearer"})
     try:
         payload=jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
+        print(payload)
         id:str=payload.get("user_id")
         if id is None:
             raise credentials_exception
         token_data=TokenData(id=id)
-        return token_data
+        return token_data.id
     except JWTError:
         raise credentials_exception
             
 def getCurrentUser(token:str=Depends(oauth2_scheme),db=Depends(get_db)):
-    return verifyJwtToken(token,db)
-      
+    id=verifyJwtToken(token)
+    user=db.query(model.users).filter(model.users.id==id).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="User not found")
+    return user.id

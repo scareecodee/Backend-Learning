@@ -54,8 +54,9 @@ def test_post(db:session=Depends(get_db)):
 # -------------------OR----------------------------------
 
 @router.post('',response_model=schemas.res)
-def createPost(post:schemas.Post,db:session=Depends(get_db),getCurrentUser=Depends(getCurrentUser)):
+def createPost(post:schemas.Post,db:session=Depends(get_db),user_id:int=Depends(getCurrentUser)):
     new_post=model.Post(**post.dict())
+    new_post.owner_id=user_id  # Assuming you want to associate the post with the current user
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -103,9 +104,11 @@ def getPostById(id:int,db:session=Depends(get_db)):
 # -------------------OR--------------------------
 
 @router.delete("/{id}",response_model=schemas.res)
-def deletePost(id:int,db:session=Depends(get_db)):
+def deletePost(id:int,db:session=Depends(get_db),user_id:int=Depends(getCurrentUser)):
     deleted_post=db.query(model.Post).filter(model.Post.id==id).first()
     if deleted_post:
+        if deleted_post.owner_id != user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this post")
         db.delete(deleted_post)
         db.commit()
         return deleted_post
@@ -140,13 +143,14 @@ def deletePost(id:int,db:session=Depends(get_db)):
 
 
 @router.put("/{id}",response_model=schemas.res)
-def update_post(response: Response, id: int, post: schemas.Post, db:session = Depends(get_db)):
+def update_post(response: Response, id: int, post: schemas.Post, db:session = Depends(get_db), user_id:int=Depends(getCurrentUser)):
     post_query = db.query(model.Post).filter(model.Post.id == id)
 
     existing_post = post_query.first()
     if not existing_post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"post with is {id} not found")
-
+    if existing_post.owner_id != user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update this post")
     post_query.update(post.dict(), synchronize_session=False)
     db.commit()
     db.refresh(existing_post) 
