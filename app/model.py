@@ -27,3 +27,9 @@ class Users(Base):
     password=Column(type_=String,nullable=False)
     created_at = Column(type_=DateTime(timezone=True), server_default=func.now()) 
 
+#for votes/likes
+class Vote(Base):
+    __tablename__="votes"
+
+    post_id=Column(Integer,ForeignKey("posts.id",ondelete="CASCADE"),nullable=False,primary_key=True)
+    user_id=Column( String,ForeignKey("users.id",ondelete="CASCADE"),primary_key=True,nullable=False)

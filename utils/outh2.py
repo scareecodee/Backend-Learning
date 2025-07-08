@@ -45,7 +45,7 @@ def verifyJwtToken(token:str=Depends(oauth2_scheme)):
             
 def getCurrentUser(token:str=Depends(oauth2_scheme),db=Depends(get_db)):
     id=verifyJwtToken(token)
-    user=db.query(model.users).filter(model.users.id==id).first()
+    user=db.query(model.Users).filter(model.Users.id==id).first()
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="User not found")

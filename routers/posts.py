@@ -1,17 +1,14 @@
-from fastapi import FastAPI , Response, HTTPException,status,Depends,APIRouter
-import psycopg2
-from typing import List
-from psycopg2.extras import RealDictCursor
+from fastapi import Response, HTTPException,status,Depends,APIRouter
+from typing import List, Optional
 from dotenv import load_dotenv
-import os
-import time
 from app import model ,schemas
 from sqlalchemy.orm import session 
 from app.database import engine, get_db
 from utils.outh2 import getCurrentUser
 
 #"Look at all classes that inherit from Base (your SQLAlchemy models), and create the corresponding tables in the database — if they don’t already exist."
-model.Base.metadata.create_all(bind=engine)
+
+# model.Base.metadata.create_all(bind=engine) commented out because now we are using alembic autogeneration to build tablesy
 
 
 router=APIRouter(
@@ -32,11 +29,13 @@ router=APIRouter(
 #  ----------------OR--------------------------
 
 @router.get('',response_model=List[schemas.res])
-def test_post(db:session=Depends(get_db)):
-    posts=db.query(model.Post).all()
+def test_post(db:session=Depends(get_db),limit:int=5,skip:int=0,search:Optional[str]=""):
+    print(limit)
+    posts=db.query(model.Post).filter(model.Post.title.contains(search)).limit(limit).offset(skip).all()
     return posts
 
 
+# how to use query parameters in fastapi ---> https://localhost:8000/post?limit=10&search=python
 
 
  

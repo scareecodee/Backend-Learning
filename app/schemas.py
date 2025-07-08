@@ -47,3 +47,15 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):  #data to be embeded in payload of jwt token
     id:Optional[str]= None
+
+
+class VoteReq(BaseModel):
+    post_id:int
+    vote_direction:int
+
+class VoteRes(BaseModel):
+    post_id:int
+    user_id:int
+    vote_direction:int
+    class Config:
+        from_attributes = True

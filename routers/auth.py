@@ -20,7 +20,7 @@ router=APIRouter()
 
 @router.post("/login",response_model=schemas.Token)
 def login(credential:OAuth2PasswordRequestForm=Depends(),db=Depends(get_db)):
-    user=db.query(model.users).filter(model.users.
+    user=db.query(model.Users).filter(model.Users.
     email==credential.username).first()
     if user:
         pass_entered=credential.password
