@@ -12,7 +12,7 @@ DB_USER = os.getenv("database_username")
 DB_PASSWORD = (os.getenv("database_password"))
 
 
-DATABASE_URL= f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URL="postgresql://kumar:vWbWsobZwT0hjKwn4n2Dpe5VbKkFKnqx@dpg-d1mke4er433s73dhtnu0-a/fastapi_ze5u"
 
 engine=create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
