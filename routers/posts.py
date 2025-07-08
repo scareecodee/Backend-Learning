@@ -11,6 +11,7 @@ from utils.outh2 import getCurrentUser
 # model.Base.metadata.create_all(bind=engine) commented out because now we are using alembic autogeneration to build tablesy
 
 
+
 router=APIRouter(
     prefix="/post",
     tags=['posts']

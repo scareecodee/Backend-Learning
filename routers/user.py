@@ -14,7 +14,7 @@ router=APIRouter(
 def createUser(user:schemas.createUserReq,db:session=Depends(get_db)):
     hashed_password=hash_password(user.password)
     user.password=hashed_password
-    user=model.users(**user.dict())
+    user=model.Users(**user.dict())
     db.add(user)
     db.commit()
     db.refresh(user)
